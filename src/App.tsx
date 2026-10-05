@@ -22,11 +22,44 @@ import { MascotQafiChat } from './components/MascotQafiChat';
 import { INITIAL_REGISTRATIONS, PACKAGES, COMPANY_INFO, DEFAULT_CREDENTIALS, DEFAULT_LOGO } from './data/mockData';
 import { RegistrationRecord, UmrahPackage, UserRole, RoleCredentials } from './types';
 import { WhatsAppContextMessageOptions } from './utils/whatsapp';
-import { Upload, X, Save, Image as ImageIcon, Sparkles, Check } from 'lucide-react';
+import { Upload, X, Save, Image as ImageIcon, Sparkles, Check, Cloud, Database } from 'lucide-react';
+import { 
+  testConnection, 
+  fetchPackagesFromFirestore, 
+  savePackageToFirestore, 
+  fetchRegistrationsFromFirestore, 
+  saveRegistrationToFirestore, 
+  fetchSettingsFromFirestore, 
+  saveSettingsToFirestore 
+} from './services/firebase';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('beranda');
   const [userRole, setUserRole] = useState<UserRole>('calon_jamaah');
+  const [firebaseConnected, setFirebaseConnected] = useState<boolean>(true);
+
+  // Top running announcement text (persisted in local + Firebase)
+  const [announcementText, setAnnouncementText] = useState<string>(() => {
+    try {
+      return localStorage.getItem('qafiya_announcement') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const handleUpdateAnnouncement = (text: string) => {
+    setAnnouncementText(text);
+    try {
+      if (text) {
+        localStorage.setItem('qafiya_announcement', text);
+      } else {
+        localStorage.removeItem('qafiya_announcement');
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    saveSettingsToFirestore({ logoUrl: customLogo, marqueeAnnouncement: text });
+  };
 
   // Persistence for Custom Logo (QAFIYA logo)
   const [customLogo, setCustomLogo] = useState<string | null>(() => {
@@ -48,6 +81,7 @@ export default function App() {
     } catch (e) {
       console.warn('LocalStorage logo error:', e);
     }
+    saveSettingsToFirestore({ logoUrl: newLogo, marqueeAnnouncement: announcementText });
   };
 
   // Persistence for Packages (Admin can edit images & details per package)
@@ -71,6 +105,8 @@ export default function App() {
       }
       return next;
     });
+    // Sync with Firebase Firestore
+    savePackageToFirestore(updatedPkg);
   };
 
   const handleResetPackages = () => {
@@ -79,6 +115,21 @@ export default function App() {
       localStorage.removeItem('qafiya_packages');
     } catch (e) {
       console.warn(e);
+    }
+  };
+
+  // Sync all local state to Firebase Firestore
+  const handleSyncToFirebase = async () => {
+    try {
+      await saveSettingsToFirestore({ logoUrl: customLogo, marqueeAnnouncement: announcementText });
+      for (const p of packages) {
+        await savePackageToFirestore(p);
+      }
+      for (const r of registrations) {
+        await saveRegistrationToFirestore(r);
+      }
+    } catch (e) {
+      console.warn('Sync to Firebase error:', e);
     }
   };
 
@@ -177,6 +228,39 @@ export default function App() {
   const [preselectedDp, setPreselectedDp] = useState<number | undefined>();
   const [preselectedTenor, setPreselectedTenor] = useState<number | undefined>();
 
+  // Initialize and synchronize with Firebase Firestore on mount
+  useEffect(() => {
+    testConnection().then((connected) => {
+      setFirebaseConnected(connected);
+    });
+
+    fetchSettingsFromFirestore().then((settings) => {
+      if (settings?.logoUrl) {
+        setCustomLogo(settings.logoUrl);
+      }
+      if (settings?.marqueeAnnouncement !== undefined && settings.marqueeAnnouncement !== null) {
+        setAnnouncementText(settings.marqueeAnnouncement);
+      }
+    });
+
+    fetchPackagesFromFirestore().then((fbPackages) => {
+      if (fbPackages && fbPackages.length > 0) {
+        setPackages(fbPackages);
+      } else {
+        // Seed initial packages into Firestore
+        PACKAGES.forEach((pkg) => {
+          savePackageToFirestore(pkg);
+        });
+      }
+    });
+
+    fetchRegistrationsFromFirestore().then((fbRegs) => {
+      if (fbRegs && fbRegs.length > 0) {
+        setRegistrations(fbRegs);
+      }
+    });
+  }, []);
+
   // WhatsApp Gateway Modal state
   const [isGatewayOpen, setIsGatewayOpen] = useState(false);
   const [gatewayOptions, setGatewayOptions] = useState<WhatsAppContextMessageOptions>({
@@ -215,12 +299,14 @@ export default function App() {
 
   const handleSuccessRegister = (newRecord: RegistrationRecord) => {
     setRegistrations((prev) => [newRecord, ...prev]);
+    saveRegistrationToFirestore(newRecord);
   };
 
   const handleUpdateRegistration = (updated: RegistrationRecord) => {
     setRegistrations((prev) =>
       prev.map((r) => (r.id === updated.id ? updated : r))
     );
+    saveRegistrationToFirestore(updated);
   };
 
   // Admin shortcut to edit a package photo
@@ -282,6 +368,7 @@ export default function App() {
         onOpenGateway={handleOpenGateway}
         customLogo={customLogo}
         onLogoutRole={handleLogoutRole}
+        announcementText={announcementText}
       />
 
       {/* Main Content Areas */}
@@ -368,6 +455,10 @@ export default function App() {
             packages={packages}
             onUpdatePackage={handleUpdatePackage}
             onResetPackages={handleResetPackages}
+            announcementText={announcementText}
+            onUpdateAnnouncement={handleUpdateAnnouncement}
+            firebaseConnected={firebaseConnected}
+            onSyncToFirebase={handleSyncToFirebase}
           />
         )}
 

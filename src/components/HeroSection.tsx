@@ -57,39 +57,55 @@ export const HeroSection: React.FC<Props> = ({ onSelectTab, onOpenGateway, custo
         </div>
 
         {/* Animated Modern Moving QAFIYA Showcase */}
-        <div className="flex flex-col items-center justify-center my-4 select-none">
+        <div className="flex flex-col items-center justify-center my-4 sm:my-6 select-none">
           <div className="relative group animate-float-slow">
             {/* Glowing moving background aura */}
-            <div className="absolute -inset-3 bg-gradient-to-r from-amber-400/30 via-emerald-500/35 to-teal-400/30 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition-all duration-1000 animate-pulse-glow pointer-events-none" />
+            <div className="absolute -inset-4 bg-gradient-to-r from-amber-400/40 via-emerald-500/40 to-teal-400/40 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-all duration-1000 animate-pulse-glow pointer-events-none" />
 
-            {/* Modern Glass Card with moving gradient text */}
-            <div className="relative px-5 py-3 sm:px-8 sm:py-4.5 rounded-3xl bg-emerald-950/85 backdrop-blur-xl border-2 border-amber-300/40 shadow-2xl flex items-center gap-3 sm:gap-4.5">
-              {/* Logo / Emblem */}
+            {/* Modern Glass Card with kinetic moving typography */}
+            <div className="relative px-6 py-3.5 sm:px-10 sm:py-5 rounded-3xl bg-emerald-950/90 backdrop-blur-2xl border-2 border-amber-300/50 shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex items-center gap-4 sm:gap-6">
+              {/* Animated Floating Logo / Emblem */}
               {customLogo ? (
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white p-1.5 shadow-xl border border-amber-300/60 flex items-center justify-center overflow-hidden shrink-0 group-hover:rotate-3 transition-transform">
+                <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white p-1.5 shadow-2xl border-2 border-amber-300/70 flex items-center justify-center overflow-hidden shrink-0 group-hover:rotate-6 group-hover:scale-105 transition-all duration-300 animate-gentle-tilt">
                   <img src={customLogo} alt="Logo QAFIYA DHW" className="max-w-full max-h-full object-contain" />
                 </div>
               ) : (
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-amber-400 via-emerald-600 to-teal-900 p-0.5 shadow-xl border border-amber-300/60 flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-br from-amber-400 via-emerald-600 to-teal-900 p-0.5 shadow-2xl border-2 border-amber-300/70 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform animate-gentle-tilt">
                   <div className="w-full h-full bg-emerald-950 rounded-[14px] flex items-center justify-center text-amber-300">
-                    <Compass className="w-7 h-7 sm:w-9 sm:h-9 animate-spin-slow text-amber-300" />
+                    <Compass className="w-8 h-8 sm:w-10 sm:h-10 animate-spin-slow text-amber-300" />
                   </div>
                 </div>
               )}
 
-              {/* Dynamic Animated QAFIYA Text */}
+              {/* Dynamic Animated Kinetic QAFIYA Letters */}
               <div className="text-left">
-                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                  <span className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-wider uppercase bg-gradient-to-r from-amber-300 via-emerald-200 to-amber-100 bg-clip-text text-transparent drop-shadow-md animate-shimmer-text">
-                    QAFIYA
+                <div className="flex items-center gap-2 sm:gap-3.5 flex-wrap">
+                  {/* Staggered Animated Wave Letters */}
+                  <span className="inline-flex tracking-wider uppercase font-black text-3xl sm:text-5xl lg:text-6xl drop-shadow-[0_4px_16px_rgba(245,158,11,0.45)]">
+                    {['Q', 'A', 'F', 'I', 'Y', 'A'].map((letter, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-block animate-wave-letter bg-gradient-to-r from-amber-300 via-emerald-200 to-amber-100 bg-clip-text text-transparent hover:scale-125 transition-transform cursor-default"
+                        style={{
+                          animationDelay: `${idx * 0.15}s`,
+                          animationDuration: '2.5s',
+                        }}
+                      >
+                        {letter}
+                      </span>
+                    ))}
                   </span>
-                  <span className="text-[11px] sm:text-xs font-bold text-amber-300 bg-emerald-900/90 border border-emerald-500/50 px-2.5 py-1 rounded-full uppercase tracking-wider">
+
+                  <span className="text-[11px] sm:text-xs font-bold text-amber-300 bg-emerald-900/90 border border-emerald-500/60 px-3 py-1 rounded-full uppercase tracking-wider shadow-sm animate-pulse">
                     × DHW Travel
                   </span>
                 </div>
-                <div className="text-[11px] sm:text-xs text-emerald-200/90 font-medium tracking-wide flex items-center gap-1.5 mt-0.5">
+                
+                <div className="text-[11px] sm:text-xs text-emerald-200/95 font-medium tracking-wide flex items-center gap-2 mt-1">
                   <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin-slow shrink-0" />
-                  <span>Langkah Nyata Menuju Baitullah • Amanah & Sesuai Sunnah</span>
+                  <span className="font-semibold text-white">Langkah Nyata Menuju Baitullah</span>
+                  <span className="text-amber-400 hidden sm:inline">•</span>
+                  <span className="text-emerald-300/90 hidden sm:inline">Amanah & Sesuai Sunnah</span>
                 </div>
               </div>
             </div>

@@ -30,6 +30,7 @@ interface Props {
   onOpenGateway: (options?: any) => void;
   customLogo: string | null;
   onLogoutRole?: (role: UserRole) => void;
+  announcementText?: string;
 }
 
 export const Navbar: React.FC<Props> = ({
@@ -40,6 +41,7 @@ export const Navbar: React.FC<Props> = ({
   onOpenGateway,
   customLogo,
   onLogoutRole,
+  announcementText,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -62,8 +64,14 @@ export const Navbar: React.FC<Props> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-emerald-100 shadow-xs">
-      {/* Top Running Text Marquee (Teks Berjalan Paling Atas) */}
+      {/* Top Running Text Marquee (Teks Berjalan Paling Atas Layar) */}
       <div className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-950 text-white text-[11px] py-1.5 overflow-hidden relative border-b border-emerald-800/80 shadow-inner select-none flex items-center">
+        {/* Live status badge on top bar */}
+        <div className="hidden sm:flex shrink-0 z-20 items-center gap-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-[10px] px-3 py-1 ml-2 rounded-lg shadow-sm uppercase tracking-wider">
+          <span className="w-2 h-2 rounded-full bg-red-600 animate-ping inline-block" />
+          <span className="font-extrabold">LIVE INFO</span>
+        </div>
+
         {/* Soft edge gradient fades */}
         <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-emerald-950 to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-teal-950 to-transparent z-10 pointer-events-none" />
@@ -76,6 +84,11 @@ export const Navbar: React.FC<Props> = ({
         >
           {/* Loop block 1 */}
           <div className="inline-flex items-center gap-6 text-xs shrink-0">
+            {announcementText && (
+              <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 font-black px-3 py-0.5 rounded-full text-[11px] shadow-sm animate-pulse">
+                📢 {announcementText}
+              </span>
+            )}
             <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3 h-3 text-slate-950" />
               QAFIYA × Darul Hikmah Wisata
@@ -116,6 +129,11 @@ export const Navbar: React.FC<Props> = ({
 
           {/* Loop block 2 for continuous seamless scroll */}
           <div className="inline-flex items-center gap-6 text-xs shrink-0" aria-hidden="true">
+            {announcementText && (
+              <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 font-black px-3 py-0.5 rounded-full text-[11px] shadow-sm animate-pulse">
+                📢 {announcementText}
+              </span>
+            )}
             <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3 h-3 text-slate-950" />
               QAFIYA × Darul Hikmah Wisata
@@ -177,12 +195,19 @@ export const Navbar: React.FC<Props> = ({
             )}
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-lg sm:text-xl font-black tracking-wider bg-gradient-to-r from-emerald-900 via-emerald-700 to-amber-700 bg-clip-text text-transparent animate-shimmer-text">
+                <span className={`text-lg sm:text-xl font-black tracking-wider bg-gradient-to-r from-emerald-900 via-emerald-700 to-amber-700 bg-clip-text text-transparent ${
+                  activeTab === 'beranda' ? 'animate-shimmer-text drop-shadow-xs' : ''
+                }`}>
                   QAFIYA
                 </span>
                 <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                   × DHW
                 </span>
+                {activeTab === 'beranda' && (
+                  <span title="Sedang di Beranda">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-spin-slow shrink-0" />
+                  </span>
+                )}
               </div>
               <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium tracking-tight">
                 Darul Hikmah Wisata • Umrah & Haji Syariah

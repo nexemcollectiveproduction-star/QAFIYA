@@ -1,0 +1,159 @@
+{
+  "entities": {
+    "Package": {
+      "title": "Umrah Package",
+      "description": "Umrah package catalog item managed by QAFIYA x Darul Hikmah Wisata admin",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique package identifier",
+          "maxLength": 64
+        },
+        "name": {
+          "type": "string",
+          "description": "Package title name",
+          "maxLength": 150
+        },
+        "days": {
+          "type": "number",
+          "description": "Duration in days"
+        },
+        "priceQuad": {
+          "type": "number",
+          "description": "Base price in IDR for Quad room"
+        },
+        "image": {
+          "type": "string",
+          "description": "Package photo URL",
+          "maxLength": 1000
+        },
+        "makkahHotel": {
+          "type": "string",
+          "description": "Hotel in Makkah",
+          "maxLength": 200
+        },
+        "madinahHotel": {
+          "type": "string",
+          "description": "Hotel in Madinah",
+          "maxLength": 200
+        },
+        "airline": {
+          "type": "string",
+          "description": "Airline partner",
+          "maxLength": 150
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Whether package is highlighted"
+        },
+        "badge": {
+          "type": "string",
+          "description": "Package marketing badge",
+          "maxLength": 100
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last updated timestamp"
+        }
+      },
+      "required": ["id", "name", "days", "priceQuad", "image"]
+    },
+    "Registration": {
+      "title": "Registration Record",
+      "description": "Prospective or registered jamaah booking record",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique registration ID",
+          "maxLength": 64
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full legal name as in passport/KTP",
+          "maxLength": 150
+        },
+        "phone": {
+          "type": "string",
+          "description": "WhatsApp contact number",
+          "maxLength": 30
+        },
+        "packageId": {
+          "type": "string",
+          "description": "Selected package ID",
+          "maxLength": 64
+        },
+        "packageName": {
+          "type": "string",
+          "description": "Name of package",
+          "maxLength": 150
+        },
+        "dpAmount": {
+          "type": "number",
+          "description": "Down payment amount in IDR"
+        },
+        "installmentMonths": {
+          "type": "number",
+          "description": "Tenor months for sharia financing"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "verified", "active", "completed", "cancelled"],
+          "description": "Registration verification status"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["id", "fullName", "phone", "packageId", "packageName", "status", "createdAt"]
+    },
+    "Settings": {
+      "title": "System Settings",
+      "description": "Global application configuration and marquee text",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Settings key",
+          "maxLength": 64
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "Custom QAFIYA logo URL",
+          "maxLength": 2000
+        },
+        "serverPhone": {
+          "type": "string",
+          "description": "Server gateway WhatsApp number",
+          "maxLength": 30
+        },
+        "marqueeAnnouncement": {
+          "type": "string",
+          "description": "Top marquee running announcement text",
+          "maxLength": 500
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of update"
+        }
+      },
+      "required": ["id"]
+    }
+  },
+  "firestore": {
+    "/packages/{packageId}": {
+      "schema": "Package",
+      "description": "Catalog of available Umrah packages"
+    },
+    "/registrations/{registrationId}": {
+      "schema": "Registration",
+      "description": "Jamaah booking registrations"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Application settings and marquee text"
+    }
+  }
+}

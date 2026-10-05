@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email in ['admin@qafiya.id', 'darulhikmahwisata@gmail.com']
+      );
+    }
+
+    // Validation helper for Packages
+    function isValidPackage(data) {
+      return data.id is string && data.id.size() <= 64 &&
+             data.name is string && data.name.size() <= 150 &&
+             data.days is number && data.days > 0 && data.days <= 60 &&
+             data.priceQuad is number && data.priceQuad > 0 &&
+             data.image is string && data.image.size() <= 1000;
+    }
+
+    // Validation helper for Jamaah Registrations
+    function isValidRegistration(data) {
+      return data.id is string && data.id.size() <= 64 &&
+             data.fullName is string && data.fullName.size() >= 2 && data.fullName.size() <= 150 &&
+             data.phone is string && data.phone.size() >= 6 && data.phone.size() <= 30 &&
+             data.packageId is string && data.packageId.size() <= 64 &&
+             data.packageName is string && data.packageName.size() <= 150 &&
+             data.status in ['pending', 'verified', 'active', 'completed', 'cancelled'] &&
+             data.createdAt is string;
+    }
+
+    // Validation helper for Application Settings
+    function isValidSettings(data) {
+      return data.id is string && data.id.size() <= 64;
+    }
+
+    // Packages Collection
+    match /packages/{packageId} {
+      allow read: if true;
+      allow create: if isValidId(packageId) && isValidPackage(incoming());
+      allow update: if isValidId(packageId) && isValidPackage(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Registrations Collection
+    match /registrations/{registrationId} {
+      allow read: if true;
+      allow create: if isValidId(registrationId) && isValidRegistration(incoming());
+      allow update: if isValidId(registrationId) && isValidRegistration(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Global Settings Collection (logo, announcements, server gateway)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update: if isValidId(settingId) && isValidSettings(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Admin authorization records
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+  }
+}

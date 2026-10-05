@@ -23,20 +23,24 @@
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 36s linear infinite;
+  animation: marquee 32s linear infinite;
+  will-change: transform;
 }
 
 .animate-marquee:hover {
   animation-play-state: paused;
 }
 
-/* Modern Animated Moving QAFIYA Heading */
+/* Kinetic Moving QAFIYA Typography Animations */
 @keyframes floatSlow {
   0%, 100% {
-    transform: translateY(0px) scale(1);
+    transform: translateY(0px) rotate(0deg);
   }
-  50% {
-    transform: translateY(-8px) scale(1.02);
+  25% {
+    transform: translateY(-5px) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(3px) rotate(0.5deg);
   }
 }
 
@@ -54,26 +58,58 @@
 
 @keyframes pulseGlow {
   0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
+    opacity: 0.45;
+    transform: scale(0.98);
   }
   50% {
-    opacity: 0.8;
-    transform: scale(1.08);
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes waveLetter {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes gentleTilt {
+  0%, 100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
   }
 }
 
 .animate-float-slow {
-  animation: floatSlow 3.8s ease-in-out infinite;
+  animation: floatSlow 4s ease-in-out infinite;
 }
 
 .animate-shimmer-text {
-  background-size: 200% auto;
-  animation: shimmerGlow 4s ease infinite;
+  background-size: 250% auto;
+  animation: shimmerGlow 3.5s ease infinite;
 }
 
 .animate-pulse-glow {
   animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-wave-letter {
+  display: inline-block;
+  animation: waveLetter 2.4s ease-in-out infinite;
+}
+
+.animate-gentle-tilt {
+  animation: gentleTilt 5s ease-in-out infinite;
+}
+
+/* Spin slow */
+.animate-spin-slow {
+  animation: spin 16s linear infinite;
 }
 
 /* Custom scrollbars */
