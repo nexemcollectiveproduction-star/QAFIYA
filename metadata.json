@@ -1,0 +1,6 @@
+{
+  "name": "QAFIYA × Darul Hikmah Wisata",
+  "description": "Layanan Perjalanan Ibadah Umrah & Haji Terpercaya — Aman, Nyaman, Sesuai Syariat, Tanpa Riba dengan Pembiayaan Cicilan Mandiri dan Gateway WhatsApp Terpadu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
